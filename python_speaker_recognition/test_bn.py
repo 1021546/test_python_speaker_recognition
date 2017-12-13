@@ -122,6 +122,10 @@ model_ce.add(Dense(128, input_dim=39))
 model_ce.add(Activation('relu'))
 model_ce.add(Dense(256))
 model_ce.add(Activation('relu'))
+model_ce.add(Dense(20))
+model_ce.add(Activation('relu'))
+model_ce.add(Dense(256))
+model_ce.add(Activation('relu'))
 model_ce.add(Dense(6))
 model_ce.add(Activation('softmax'))
 
@@ -170,9 +174,53 @@ plt.show()
 
 from keras import backend as K
 # with a Sequential model
-get_4rd_layer_output = K.function([model_ce.layers[0].input],
-                                  [model_ce.layers[4].output])
+get_5th_layer_output = K.function([model_ce.layers[0].input],
+                                  [model_ce.layers[5].output])
 
 
-layer_output = get_4rd_layer_output([x_train])[0]
+layer_output = get_5th_layer_output([x_train])[0]
 print(layer_output)
+print(layer_output.shape)
+
+model_bn = Sequential()
+model_bn.add(Dense(128, input_dim=20))
+model_bn.add(Activation('relu'))
+model_bn.add(Dense(256))
+model_bn.add(Activation('relu'))
+model_bn.add(Dense(6))
+model_bn.add(Activation('softmax'))
+
+
+''' Compile model with specified loss and optimizer '''
+model_bn.compile(loss='categorical_crossentropy',
+				optimizer=sgd,
+				metrics=['accuracy'])
+
+
+'''Fit models and use validation_split=0.1 '''
+history_bn = model_bn.fit(layer_output, y_train,
+							batch_size=batch_size,
+							epochs=epochs,
+							verbose=1,
+							shuffle=True,
+                    		validation_split=0.1)
+
+# score = model_bn.evaluate(x_test, y_test, verbose=1)
+# print('Test loss:', score[0])
+# print('Test accuracy:', score[1])
+
+
+'''Access the loss and accuracy in every epoch'''
+loss_bn	= history_bn.history.get('loss')
+acc_bn 	= history_bn.history.get('acc')
+
+''' Visualize the loss and accuracy of both models'''
+plt.figure(2)
+plt.subplot(121)
+plt.plot(range(len(loss_bn)), loss_bn,label='BN')
+plt.title('Loss')
+plt.legend(loc='upper left')
+plt.subplot(122)
+plt.plot(range(len(acc_bn)), acc_bn,label='BN')
+plt.title('Accuracy')
+plt.show()
