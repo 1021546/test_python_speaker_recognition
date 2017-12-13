@@ -122,7 +122,7 @@ model_ce.add(Dense(128, input_dim=39))
 model_ce.add(Activation('relu'))
 model_ce.add(Dense(256))
 model_ce.add(Activation('relu'))
-model_ce.add(Dense(20))
+model_ce.add(Dense(39))
 model_ce.add(Activation('relu'))
 model_ce.add(Dense(256))
 model_ce.add(Activation('relu'))
@@ -183,7 +183,7 @@ print(layer_output)
 print(layer_output.shape)
 
 model_bn = Sequential()
-model_bn.add(Dense(128, input_dim=20))
+model_bn.add(Dense(128, input_dim=39))
 model_bn.add(Activation('relu'))
 model_bn.add(Dense(256))
 model_bn.add(Activation('relu'))
@@ -205,9 +205,9 @@ history_bn = model_bn.fit(layer_output, y_train,
 							shuffle=True,
                     		validation_split=0.1)
 
-# score = model_bn.evaluate(x_test, y_test, verbose=1)
-# print('Test loss:', score[0])
-# print('Test accuracy:', score[1])
+score = model_bn.evaluate(x_test, y_test, verbose=1)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
 
 
 '''Access the loss and accuracy in every epoch'''
